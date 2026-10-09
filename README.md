@@ -13,7 +13,7 @@ cp -r claude-skills/.claude/skills/<skill-name> ~/.claude/skills/
 
 Restart Claude Code. Skills load automatically when relevant.
 
-## Skills (52)
+## Skills (53)
 
 | Area | Skills |
 |---|---|
@@ -24,7 +24,7 @@ Restart Claude Code. Skills load automatically when relevant.
 | Sales | cold-email, prospecting, sales-enablement, revops |
 | Research | customer-research, competitors, competitor-profiling, analytics, attribution |
 | Writing | copywriting, copy-editing |
-| Productivity | ainote, caveman |
+| Productivity | ainote, caveman, pedrojaimot-file-organizer |
 
 ## Structure
 
