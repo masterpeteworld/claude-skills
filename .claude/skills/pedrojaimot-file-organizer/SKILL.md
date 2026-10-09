@@ -11,8 +11,8 @@ Personal files only. Employer files (Atlas Ocean Voyages, Mystic Cruises, charte
 
 1. **Plan before action.** Analyze → propose plan → wait for explicit "yes" → execute.
 2. **No deletes without approval.** Duplicates and junk go to `99_Archive/_To-Delete/` first; permanent delete only on a second explicit approval.
-3. **Log every move** to `_organizer-log/YYYY-MM-DD.tsv` (`old_path<TAB>new_path`) at the target root so any run can be undone.
-4. **Preserve timestamps** (`mv`, or `cp -p` across volumes). Never overwrite: on name clash, append `_v2`, `_v3`.
+3. **Log every move** to `_organizer-log/YYYY-MM-DD.tsv` (`old_path<TAB>new_path`, in execution order) at the target root so any run can be undone.
+4. **Move with `mv -n` only.** It preserves timestamps, works across volumes, and never overwrites. Never use `cp` (it leaves the source behind, and removing it is a delete). On name clash, append `_v2`, `_v3`.
 5. **Stop and ask** on anything sensitive (IDs, passwords, financial or medical records) or ambiguous. Never print their contents.
 6. **Concise output.** Tables and lists only. No long explanations.
 
@@ -60,9 +60,9 @@ find "$T" -type f | wc -l; du -sh "$T"
 find "$T" -type f | sed -n 's/.*\.\([^./]*\)$/\1/p' | tr A-Z a-z | sort | uniq -c | sort -rn | head -15
 find "$T" -type f -size +100M -exec du -h {} + | sort -rh | head -10
 find "$T" -type f -mtime +365 | wc -l   # archive candidates
-# Work-file detection
+# Work-file detection (macOS + Linux); matches are candidates only, confirm before flagging
 grep -rliE 'atlas|mystic|charter|mice|manifest|rfp|contract.*(cruise|vessel)' --include='*.txt' --include='*.md' --include='*.csv' "$T" 2>/dev/null | head
-find "$T" -type f -iregex '.*\(atlas\|mystic\|charter\|mice\|manifest\|rfp\|beo\).*' | head
+find "$T" -type f | grep -iE 'atlas|mystic|charter|mice|manifest|rfp|beo' | head
 ```
 
 ### 3. Duplicates
@@ -86,7 +86,8 @@ After a "yes": create the folders, run the moves, write the log, and print the c
 
 ### 6. Close-out
 - Summary: files moved, renamed, archived, flagged; space recoverable.
-- Undo command: `while IFS=$'\t' read -r o n; do mv -n "$n" "$o"; done < _organizer-log/<date>.tsv`
+- Undo command (replays the log newest-first so chained moves reverse cleanly; on Linux use `tac` instead of `tail -r`):
+  `tail -r _organizer-log/<date>.tsv | while IFS=$'\t' read -r o n; do mv -n "$n" "$o"; done`
 - Upkeep: **weekly** empty `00_Inbox`, **monthly** archive and dedupe, **January** roll `Finance/taxes` and `Media` year folders.
 
 ## Google Drive (pedrojaimot@gmail.com)
